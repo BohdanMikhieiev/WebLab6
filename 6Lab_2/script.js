@@ -1,22 +1,34 @@
 const menuContainer = document.getElementById('menu-container');
-const apiUrl = "https://your-api-url/api/Dropdown";
+const apiUrl = "https://dropdownapi-production.up.railway.app";
 
 async function loadData() {
-    const response = await fetch(apiUrl);
+    const response = await fetch(`${apiUrl}/load`);
     const menus = await response.json();
 
     menuContainer.innerHTML = '';
     menus.forEach(menu => {
-        const menuDiv = document.createElement('div');
-        menuDiv.innerHTML = `
-                    <h3>${menu.title}</h3>
-                    <ul>
-                        ${menu.options.map(option => `<li><a href="${option.link}">${option.name}</a></li>`).join('')}
-                    </ul>
-                `;
-        menuContainer.appendChild(menuDiv);
+        const dropdown = document.createElement('div');
+        dropdown.className = 'dropdown';
+
+        const dropdownTitle = document.createElement('div');
+        dropdownTitle.className = 'dropdown-title';
+        dropdownTitle.textContent = menu.title;
+
+        const dropdownContent = document.createElement('div');
+        dropdownContent.className = 'dropdown-content';
+
+        menu.options.forEach(option => {
+            const link = document.createElement('a');
+            link.href = option.link;
+            link.textContent = option.name;
+            dropdownContent.appendChild(link);
+        });
+
+        dropdown.appendChild(dropdownTitle);
+        dropdown.appendChild(dropdownContent);
+        menuContainer.appendChild(dropdown);
     });
 }
 
-setInterval(loadData, 5000); // Refresh every 5 seconds
+setInterval(loadData, 5000);
 loadData();
